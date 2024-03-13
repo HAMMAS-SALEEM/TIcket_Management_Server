@@ -5,7 +5,7 @@ const Ticket = db.ticket;
 const getAllTickets = (req, res) => {
   Ticket.findAll({
     where: {
-        userId: req.body.userId 
+        userId: req.query.userId 
     }
   })
   .then((tickets) => {
@@ -27,8 +27,42 @@ const createTicket = (req, res) => {
         userId: req.body.userId,
         categoryId: req.body.categoryId
     })
-    .then(() => res.status(200).send({ message: "Ticket Created Successfully"}))
+    .then((ticket) => res.status(200).send({ message: "Ticket Created Successfully", ticket}))
     .catch((error) => res.status(500).send({ message: error.message}))
 }
 
-export { getAllTickets, createTicket }
+const updateTicketStatus = (req, res) => {
+  const { id, ticketStatus } = req.body;
+
+  const ticket = {
+    ticketStatus,
+  };
+
+  Ticket.update(ticket, {
+    where: {
+      id
+    }
+  })
+  .then((updatedTicket) => {
+    return res.status(200).send({message: "Ticket Updated", updatedTicket})
+  })
+  .catch((error) => {
+    return res.status(404).send({message: error.message})
+  })
+}
+
+const deleteTicket = (req, res) => {
+  Ticket.destroy({
+    where: {
+      id: req.body.id,
+    }
+  })
+  .then(() => {
+    return res.status(200).send({ message: "Ticket Deleted Successfully!"})
+  })
+  .catch((error) => {
+    return res.status(404).send({ message: error.message })
+  })
+}
+
+export { getAllTickets, createTicket, updateTicketStatus, deleteTicket };

@@ -1,4 +1,4 @@
-import { createTicket, getAllTickets } from "../controllers/ticket.controller.js";
+import { createTicket, getAllTickets, updateTicketStatus, deleteTicket } from "../controllers/ticket.controller.js";
 import authJwt from "../middlewares/authjwt.js";
 
 export default (app) => {
@@ -19,4 +19,12 @@ export default (app) => {
     [authJwt.verifyToken],
     createTicket
     )
+
+    app.put('/ticket/update',
+    [authJwt.verifyToken],
+    updateTicketStatus)
+
+    app.delete('/ticket/destroy',
+    [authJwt.verifyToken],
+    deleteTicket)
 }

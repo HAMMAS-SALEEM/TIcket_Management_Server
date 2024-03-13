@@ -4,6 +4,7 @@ import db from './app/models/index.js'
 import authRoutes from './app/routes/auth.routes.js';
 import userRoutes from './app/routes/user.routes.js';
 import ticketRoutes from './app/routes/ticket.routes.js'
+import categoryRoutes from './app/routes/category.routes.js';
 
 const app = express();
 const Category = db.category;
@@ -15,22 +16,23 @@ app.get("/", (req, res) => {
     res.json({ message: "Welcome to Hammas Ticket Management System"})
 })
 
-const initial = () => {
-  Category.create({
-    id: 1,
-    category: 'Bug',
-  })
-  
-  Category.create({
-    id: 2,
-    category: 'Feature Request',
-  })
-  
-  Category.create({
-    id: 3,
-    category: 'Task',
-  })
-}
+const initial = async () => {
+  try {
+    const categoryCount = await Category.count();
+
+    if (categoryCount === 0) {
+      await Category.create({ category: 'Bug' });
+      await Category.create({ category: 'Feature Request' });
+      await Category.create({ category: 'Task' });
+
+      console.log('Initial categories created successfully.');
+    } else {
+      console.log('Categories already exist. Initial method skipped.');
+    }
+  } catch (error) {
+    console.error('Error creating/checking initial categories:', error.message);
+  }
+};
 
 const PORT = process.env.PORT || 8000
 
@@ -38,8 +40,11 @@ app.listen(PORT, () => {
   console.log(`Server is running on Port ${PORT}`)
 });
 
-db.sequelize.sync();
+db.sequelize.sync().then(() => {
+  initial();
+});
 
 authRoutes(app);
 userRoutes(app);
 ticketRoutes(app);
+categoryRoutes(app);

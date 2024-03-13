@@ -4,12 +4,6 @@ export default (sequelize, Sequelize) => (
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
-        validate: {
-          len: {
-            args: [3, 50],
-            msg: "Username must be between 3 and 50 characters"
-          },
-        }
     },
     email: {
         type: Sequelize.STRING,
