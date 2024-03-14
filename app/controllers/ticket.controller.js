@@ -5,7 +5,7 @@ const Ticket = db.ticket;
 const getAllTickets = (req, res) => {
   Ticket.findAll({
     where: {
-        userId: req.query.userId 
+        userId: req.userId
     }
   })
   .then((tickets) => {
@@ -57,7 +57,10 @@ const deleteTicket = (req, res) => {
       id: req.body.id,
     }
   })
-  .then(() => {
+  .then((ticket) => {
+    if(!ticket) {
+      return res.status(404).send({ message: "Ticket doesn't exist"})
+    }
     return res.status(200).send({ message: "Ticket Deleted Successfully!"})
   })
   .catch((error) => {
